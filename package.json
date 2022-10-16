@@ -1,0 +1,24 @@
+{
+  "name": "durak_game",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "launch": "nodemon src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "joi": "^17.6.3",
+    "lodash": "^4.17.21",
+    "mysql2": "^2.3.3",
+    "nodemon": "^2.0.20",
+    "redis": "^4.3.1",
+    "reflect-metadata": "^0.1.13",
+    "socket.io": "^4.5.3"
+  }
+}
