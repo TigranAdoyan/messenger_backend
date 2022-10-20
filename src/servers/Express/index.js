@@ -19,7 +19,7 @@ class ExpressApp {
 
    listen() {
       this.app.listen(configs.EXPRESS_PORT, () => {
-         console.log(`Express app started on the port ${configs.EXPRESS_PORT}`);
+         logger.info(`Express: launched successfully PORT => "${configs.EXPRESS_PORT}"`);
       })
    }
 }
@@ -32,7 +32,7 @@ function errorHandler(err, req, res, next) {
       })
    }
 
-   console.log(err)
+   logger.error(err.message);
 
    return res.status(httpCode.INTERNAL_ERROR).json({
       message: 'Server internal error',

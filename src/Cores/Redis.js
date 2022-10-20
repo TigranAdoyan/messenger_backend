@@ -3,12 +3,10 @@ const redis = require('redis');
 const dbs = {
    auth_users: 0,
    game_state: 1,
-}
+};
 
 class RedisClient {
    constructor(db) {
-      console.log(`http://${configs.REDIS_HOST}:${configs.REDIS_PORT}`);
-
       this.client = redis.createClient({
          url: `redis://${configs.REDIS_HOST}:${configs.REDIS_PORT}`,
          password: configs.REDIS_PASSWORD,
@@ -17,10 +15,10 @@ class RedisClient {
 
       this.client.connect()
           .then(() => {
-             console.log(`redisClient successfully connected ${db}`);
+             logger.info(`Redis: connected successfully "${db}"`);
           }).catch((err) => {
-             console.log(`redis connection error ${err}`);
-          })
+             logger.error(`Redis: connection error ${err}`);
+          });
 
       this.client.on('error', (err) => {
          console.log('redis error ', err)
@@ -28,4 +26,5 @@ class RedisClient {
    }
 }
 
-module.exports = RedisClient;
+module.exports.auth = new RedisClient('auth_users');
+module.exports.gameState = new RedisClient('game_state');

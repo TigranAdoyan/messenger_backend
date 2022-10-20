@@ -1,11 +1,11 @@
+const controllerValidator = require('../helpers/controllerValidator');
 const CoreController = require('./core');
 const auth = require('../../../services/auth');
-const controllerValidator = require('../helpers/controllerValidator');
 
 class UsersController extends CoreController {
    service = {
       auth
-   }
+   };
 
    constructor() {
       super('users');
@@ -17,7 +17,7 @@ class UsersController extends CoreController {
       const authData = await this.service.auth.login({
          username,
          password
-      })
+      });
 
       res.json(authData);
    }

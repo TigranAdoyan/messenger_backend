@@ -9,7 +9,15 @@ class MysqlClient {
          user: configs.user,
          password: configs.password,
       });
+
+      this.connection.query('SELECT VERSION()', [], (err, result) => {
+         if (err) {
+            logger.error(err.message);
+         } else {
+            logger.info(`Mysql: connected successfully "${configs.host}:${configs.port}/${configs.db || ''}"`)
+         }
+      })
    }
 }
 
-module.exports = MysqlClient;
+module.exports.durak = new MysqlClient(configs.MYSQL.DURAK);
