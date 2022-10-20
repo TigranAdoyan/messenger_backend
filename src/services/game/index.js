@@ -1,34 +1,33 @@
-const RedisClient = require('../../Cores/Redis');
+const RedisClients = require('../../Cores/Redis');
+const MongoClients = require('../../mongo/gameDb');
 const helpers = require('./helpers');
 const dict = require('./dict');
 
-const gameDataStructure = {
-   token: 'some_token',
-   players: [
-      {
-         id: 234,
-         cards: [
-            {
+class GameService {
+   gameState = RedisClients.gameState;
 
-            }
-         ]
-      }
-   ]
-}
-
-class Game {
-   gameStorage = new RedisClient('game_state');
+   gameData = MongoClients.game;
 
    constructor() {
-
    }
 
-   async startNewGame() {
+   async startNewGame(props) {
+
+      console.log(props);
+
+
+     const game = await this.gameData.create({
+         accessType: props.accessType,
+         gameType: props.gameType,
+         status: 'PENDING',
+         playersIds: props.players,
+      });
+
       const deck = helpers.shuffleCards(dict.deck);
 
-      console.log(deck);
+      return game;
    }
 }
 
 
-module.exports = new Game();
+module.exports = new GameService();

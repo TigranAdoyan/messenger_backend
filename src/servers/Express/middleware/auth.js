@@ -1,15 +1,17 @@
 const authService = require("../../../services/auth");
 
 async function auth(req, res, next) {
-   const token = req.headers['token'];
+    try {
+        const token = req.headers['authorization'];
 
-   console.log('token', token);
+        req.user = await authService.auth({
+            token
+        });
 
-   req.user = await authService.auth({
-      token
-   });
-
-   next();
+        next();
+    } catch (err) {
+        next(err)
+    }
 }
 
 module.exports = auth;

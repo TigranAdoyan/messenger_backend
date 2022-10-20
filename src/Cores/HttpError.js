@@ -5,7 +5,7 @@ const httpCode = {
    AUTH_ERROR: 401,
    NOT_FOUND: 404,
    INTERNAL_ERROR: 500
-}
+};
 
 class HttpError extends Error {
    constructor(message, code = httpCode.BAD_REQUEST) {
@@ -17,4 +17,4 @@ class HttpError extends Error {
 module.exports = {
    httpCode,
    HttpError
-}
+};

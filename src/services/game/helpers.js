@@ -10,4 +10,4 @@ function shuffleCards(cards) {
 
 module.exports = {
    shuffleCards,
-}
+};

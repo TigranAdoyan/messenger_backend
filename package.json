@@ -13,12 +13,18 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-router": "^0.0.1",
+    "express-routing": "^0.0.2",
     "joi": "^17.6.3",
+    "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
+    "mongoose": "^6.6.5",
     "mysql2": "^2.3.3",
+    "node": "^18.11.0",
     "nodemon": "^2.0.20",
     "redis": "^4.3.1",
     "reflect-metadata": "^0.1.13",
-    "socket.io": "^4.5.3"
+    "socket.io": "^4.5.3",
+    "winston": "^3.8.2"
   }
 }

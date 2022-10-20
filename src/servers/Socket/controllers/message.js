@@ -1,13 +1,13 @@
 const events = {
    send_message: 'send_message'
-}
+};
 
 class Message {
    _namespace = 'message';
 
    _handlersBinding = {
-      [events.send_message]: 'onSend',
-   }
+      [events.send_message]: this.onSend.name,
+   };
 
    constructor() {}
 

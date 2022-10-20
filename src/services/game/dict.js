@@ -19,7 +19,7 @@ const cards = [
     'jack',
     'queen',
     'king'
-]
+];
 
 const deck = (function () {
     const deck = [];
@@ -31,7 +31,7 @@ const deck = (function () {
                 suit
             })
         })
-    })
+    });
 
     return deck;
 })();
