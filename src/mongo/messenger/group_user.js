@@ -4,43 +4,29 @@ const connection = require('./connection');
 const {
     String,
     Boolean,
-    Date,
-    Array
+    Date
 } = mongoose.Schema.Types;
 
 const schema = new mongoose.Schema({
-    senderId: {
+    groupId: {
         type: String,
         required: true
     },
-    receiverId: {
+    userId: {
         type: String,
         required: true
     },
-    receiverType: {
+    role: {
         type: String,
-        enum: ['group', 'user'],
-        required: true,
+        enum: ['admin', 'member']
     },
-    seen: {
+    isBlocked: {
         type: Boolean,
         default: false
     },
-    sentAt: {
+    addedAt: {
         type: Date,
         default: Date.now
-    },
-    content: {
-        type: {
-            text: {
-                type: String,
-                required: true,
-            },
-            files: {
-                type: [{ type: String }],
-                required: true,
-            }
-        }
     },
     deletedAt: {
         type: Date,
@@ -48,4 +34,4 @@ const schema = new mongoose.Schema({
     },
 });
 
-module.exports = connection.model('messages', schema);
+module.exports = connection.model('group_user', schema);

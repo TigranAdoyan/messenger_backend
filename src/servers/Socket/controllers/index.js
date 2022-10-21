@@ -4,4 +4,4 @@ const GameController = require('./message');
 module.exports = {
    MessageController,
    // GameController
-}
+};

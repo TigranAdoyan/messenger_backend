@@ -1,4 +1,4 @@
-const MysqlClients = require('../../Cores/Mysql');
+const MysqlClients = require('../../cores/Mysql');
 
 class CoreMysql {
     client = MysqlClients.durak;

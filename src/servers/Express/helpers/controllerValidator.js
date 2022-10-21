@@ -1,4 +1,4 @@
-const {httpCode} = require("../../../Cores/HttpError");
+const {httpCode} = require("../../../cores/HttpError");
 
 function controllerValidator(obj) {
     return new Proxy(obj, {

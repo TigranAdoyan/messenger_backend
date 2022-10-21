@@ -2,7 +2,7 @@ const path = require('path');
 const { promises: Fs } = require('fs');
 
 function getAbsoluteFilePath(pathFromRoot) {
-    return path.join(__dirname, `../../../${pathFromRoot}`);
+    return path.join(__dirname, `../../${pathFromRoot}`);
 }
 
 async function isFileExist(filePath) {

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const RedisClients = require("../../Cores/Redis");
+const RedisClients = require("../../cores/Redis");
 const { User } = require('../../mysql/messenger');
-const { httpCode } = require("../../Cores/HttpError");
+const { httpCode } = require("../../cores/HttpError");
 
 class AuthService {
     _authStorage = RedisClients.auth;
@@ -14,9 +14,7 @@ class AuthService {
     async login(props) {
         const { username, password } = props;
 
-        const user = await this._User.findByUsername({
-            username
-        });
+        const user = await this._User.findBy('username', username);
 
         if (!user) {
             throw new HttpError('username/password is wrong')

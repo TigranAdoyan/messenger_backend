@@ -14,7 +14,7 @@ class MysqlClient {
          if (err) {
             logger.error(err.message);
          } else {
-            logger.info(`Mysql: connected successfully "${configs.host}:${configs.port}/${configs.db || ''}"`)
+            logger.info(`Mysql: connected successfully "${configs.host}:${configs.port}/${configs.database || ''}"`)
          }
       })
    }

@@ -30,3 +30,4 @@ class UsersController extends CoreController {
 }
 
 module.exports = controllerValidator(new UsersController());
+// module.exports = new UsersController();

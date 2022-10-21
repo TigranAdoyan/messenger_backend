@@ -1,8 +1,8 @@
 require('dotenv').config();
 
-global.httpCode = require('../Cores/HttpError').httpCode;
-global.HttpError = require('../Cores/HttpError').HttpError;
-global.logger = require('../Cores/Logger');
+global.httpCode = require('../cores/HttpError').httpCode;
+global.HttpError = require('../cores/HttpError').HttpError;
+global.logger = require('../cores/Logger');
 
 global.configs = {
    EXPRESS_PORT: parseInt(process.env.EXPRESS_PORT),
@@ -11,7 +11,7 @@ global.configs = {
    REDIS_HOST: process.env.REDIS_HOST,
    REDIS_PORT: parseInt(process.env.REDIS_PORT),
    REDIS_PASSWORD: process.env.REDIS_PASSWORD,
-   MONGO_GAME_URL: process.env.MONGO_GAME_URL,
+   MONGO_MESSENGER_URL: process.env.MONGO_MESSENGER_URL,
    MYSQL: {
       DURAK: {
          host: process.env.MYSQL_DURAK_HOST,
