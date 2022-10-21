@@ -22,12 +22,17 @@ class MessageController {
 
                 const ids = await this.socketServer.of(this.namespace).fetchSockets();
 
-                console.log(ids.map(({ id }) => id));
+                console.log(ids.map(({id}) => id));
 
                 this.service.syncMessagingData(socket.user.id)
                     .then(data => {
-                        console.log('data', data);
                         socket.emit(this.events.sync, data);
+                    });
+
+                // joining to 'groups' room;
+                this.service.getUserGroups(socket.user.id)
+                    .then(data => {
+                        console.log('groups', data);
                     });
 
                 // binding event handlers

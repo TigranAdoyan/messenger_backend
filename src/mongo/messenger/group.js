@@ -39,14 +39,22 @@ const schema = new mongoose.Schema({
 
 const model = connection.model('groups', schema);
 
-class Group {
-    constructor(connection) {
-       this.connection = connection;
-    }
-
-    find(userId) {
-        // return
-    }
-}
+model.getByUser = async function(userId) {
+    return model.aggregate([
+        {
+            $lookup: {
+                from: "user_group",
+                localField: "_id",
+                foreignField: "groupId",
+                as: "group_user"
+            }
+        },
+        {
+            $match: {
+                'group_user.userId': userId.toString(),
+            }
+        }
+    ]);
+};
 
 module.exports = model;

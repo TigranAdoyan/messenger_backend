@@ -33,7 +33,7 @@ const schema = new mongoose.Schema({
                 required: true,
             },
             files: {
-                type: [{ type: String }],
+                type: [{type: String}],
                 required: true,
             }
         }
@@ -50,38 +50,24 @@ const schema = new mongoose.Schema({
 
 const model = connection.model('messages', schema);
 
-model.getByUser = async function(userId) {
-    const groups = await groupMongoClient.aggregate([
-            {
-                $lookup: {
-                    from: "user_group",
-                    localField: "_id",
-                    foreignField: "groupId",
-                    as: "group_user"
-                }
-            },
-            {
-                $match: {
-                    'group_user.userId': userId,
-                }
-            }
-        ]);
+model.getByUser = async function (userId) {
+    const groups = await groupMongoClient.getByUser(userId)
 
     const messages = await model.aggregate([
-            {
-                $match: {
-                    $or: [
-                        {
-                            $or: [{senderId: userId.toString()}, {receiverId: userId.toString()}],
-                            receiverType: 'user'
-                        },
-                        {receiverId: groups.map((_id) => _id), receiverType: 'group'},
-                    ],
-                }
-            },
-            {$group: {_id: {receiverId: "$receiverId", receiverType: "$receiverType"}, records: {$push: "$$ROOT"}}},
-            {$sort: {sentAt: -1}},
-        ]).then(data => data.map(({records}) => records));
+        {
+            $match: {
+                $or: [
+                    {
+                        $or: [{senderId: userId.toString()}, {receiverId: userId.toString()}],
+                        receiverType: 'user'
+                    },
+                    {receiverId: groups.map((_id) => _id), receiverType: 'group'},
+                ],
+            }
+        },
+        {$group: {_id: {receiverId: "$receiverId", receiverType: "$receiverType"}, records: {$push: "$$ROOT"}}},
+        {$sort: {sentAt: -1}},
+    ]).then(data => data.map(({records}) => records));
 
     return {
         groups,

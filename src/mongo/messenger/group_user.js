@@ -20,6 +20,10 @@ const schema = new mongoose.Schema({
         type: String,
         enum: ['admin', 'member']
     },
+    accepted: {
+        type: Boolean,
+        default: false
+    },
     isBlocked: {
         type: Boolean,
         default: false

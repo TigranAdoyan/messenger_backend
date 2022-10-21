@@ -3,12 +3,7 @@ const RedisClients = require('../../../cores/Redis');
 const MongoClients = require('../../../mongo/messenger');
 
 class MessengerService {
-    onlineUsers = RedisClients.onlineUsers.client;
-
-    constructor() {
-    }
-
-    async syncMessagingData(userId) {
+    static async syncMessagingData(userId) {
         const [subscribers, subscriptions, {messages, groups}] = await Promise.all([
             MysqlMessengerClients.User.findSubscribers(userId),
             MysqlMessengerClients.User.findSubscriptions(userId),
@@ -22,8 +17,6 @@ class MessengerService {
                 messages,
             };
 
-            console.log(messages[0].receiverType);
-
             if (messages[0].receiverType === 'group') {
                 data.type = 'group';
                 data.group = groups.find(({_id}) => _id === messages[0].receiverId);
@@ -32,17 +25,21 @@ class MessengerService {
                 data.user = relatedUsers.find(({id}) => [+messages[0].receiverId, +messages[0].senderId].includes(+id));
             }
 
-            return messages;
+            return data;
         });
     }
 
-    setUserOnline(userId, socketId) {
-        this.onlineUsers.set(userId, socketId);
+    static async getUserGroups(userId) {
+        return MongoClients.group.getByUser(userId);
     }
 
-    setUserOffline(userId) {
-        this.onlineUsers.del(userId);
+    static setUserOnline(userId, socketId) {
+        RedisClients.onlineUsers.client.set(userId, socketId);
+    }
+
+    static setUserOffline(userId) {
+        RedisClients.onlineUsers.client.del(userId);
     }
 }
 
-module.exports = new MessengerService();
+module.exports = MessengerService;
