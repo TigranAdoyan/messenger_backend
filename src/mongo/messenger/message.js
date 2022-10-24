@@ -51,27 +51,25 @@ const schema = new mongoose.Schema({
 
 const model = connection.model('messages', schema);
 
+model.getUserMessages = async function (firstUserId, secondUserId) {
+    firstUserId = firstUserId.toString();
+    secondUserId = secondUserId.toString();
+
+    return model.find({
+        $or: [
+            {senderId: firstUserId, receiverId: secondUserId},
+            {senderId: secondUserId, receiverId: firstUserId},
+        ],
+        receiverType: 'user',
+    })
+        .sort({'sendAt': -1})
+        .skip(0)
+        .limit(10)
+        .lean();
+};
+
 model.getByUser = async function (userId) {
     const groups = await groupMongoClient.getByUser(userId)
-
-    // await model.create([
-    //     {
-    //         senderId: 5,
-    //         receiverId: 1,
-    //         receiverType: 'user',
-    //         content: {
-    //             text: 'From user 5'
-    //         }
-    //     },
-    //     {
-    //         senderId: 2,
-    //         receiverId: 1,
-    //         receiverType: 'user',
-    //         content: {
-    //             text: 'Response from user 2'
-    //         }
-    //     },
-    // ])
 
     return model.aggregate([
         {
@@ -85,7 +83,12 @@ model.getByUser = async function (userId) {
                 ],
             }
         },
-        {$group: {_id: {receiverId: "$receiverId", receiverType: "$receiverType"}, records: {$push: "$$ROOT"}}},
+        {
+            $group: {
+                _id: {receiverId: "$receiverId", senderId: "$senderId", receiverType: "$receiverType"},
+                records: {$push: "$$ROOT"}
+            }
+        },
         {$sort: {sentAt: -1}},
     ]).then(data => data.map(({records}) => records));
 };

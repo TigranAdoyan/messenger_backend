@@ -28,13 +28,13 @@ class Middleware {
 
        if (sessionID) {
           // find existing session
-          const session = RedisClients.messengerSession.get(sessionID);
+          const session = await RedisClients.messengerSession.get(sessionID);
           if (session) {
              socket.sessionID = sessionID;
              socket.userID = session.userID;
              socket.username = session.username;
 
-             console.log('old session')
+             console.log('old session');
              return next();
           }
        }
@@ -45,7 +45,7 @@ class Middleware {
           return next(new Error('invalid username'));
        }
 
-       console.log('new session')
+       console.log('new session');
 
        socket.sessionID = uuid.v1();
        socket.userID = uuid.v1();

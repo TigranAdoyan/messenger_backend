@@ -22,6 +22,21 @@ class User extends CoreMysql {
       `, [value]).then(result => result[0]);
     };
 
+    async findRelatedUsers(userId) {
+        return this.query(`
+           SELECT
+              u.id,
+              u.username,
+              u.age,
+              u.email,
+              u.profile_img_url
+           FROM user_subscribers AS us
+              LEFT JOIN users AS u ON u.id IN (us.userId, us.subscriberId)
+           WHERE u.id != ? AND us.userId = ? OR u.id != ? AND us.subscriberId = ? 
+      `, [parseInt(userId), parseInt(userId), parseInt(userId), parseInt(userId)])
+            .then((result = []) => result.unique());
+    }
+
     async findSubscribers(userId) {
         return this.query(`
            SELECT
@@ -35,7 +50,7 @@ class User extends CoreMysql {
              LEFT JOIN users as sub ON sub.id = us.subscriberId 
            WHERE us.userId = ?
       `, [parseInt(userId)]);
-    }
+    };
 
     async findSubscriptions(userId) {
         return this.query(`
@@ -49,7 +64,7 @@ class User extends CoreMysql {
              LEFT JOIN user_subscribers AS us ON u.id = us.userId
            WHERE us.subscriberId = ?
       `,  [parseInt(userId)]);
-    }
+    };
 
     async findRecommendedUsers(userId) {
         return this.query(`

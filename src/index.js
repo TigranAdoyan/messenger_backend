@@ -1,6 +1,6 @@
 require('./configuration');
-const ExpressServer = require('./servers/Express');
+const expressServer = require('./servers/Express');
 const socketServer = require('./servers/Socket');
 
-new ExpressServer();
+expressServer.create();
 socketServer.create();

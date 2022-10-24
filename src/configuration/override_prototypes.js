@@ -1,11 +1,14 @@
-Array.prototype.unique = function() {
-   let a = this.concat();
-   for(let i=0; i<a.length; ++i) {
-      for(let j=i+1; j<a.length; ++j) {
-         if(a[i] === a[j])
-            a.splice(j--, 1);
-      }
-   }
+const _ = require('lodash');
 
-   return a;
+Array.prototype.unique = function () {
+    let arrCopy = _.cloneDeep(this);
+
+    for (let i = 0; i < arrCopy.length; ++i) {
+        for (let j = i + 1; j < arrCopy.length; ++j) {
+            if (_.isEqual(arrCopy[i],arrCopy[j]))
+                arrCopy.splice(j--, 1);
+        }
+    }
+
+    return arrCopy;
 };

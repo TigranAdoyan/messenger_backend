@@ -1,28 +1,23 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const rootRouter = require('./routes');
 const {httpCode, HttpError} = require("../../cores/HttpError");
 
-class ExpressApp {
-   constructor() {
-      this.app = express();
+module.exports.create = function() {
+   global.expressServer = express();
 
-      this.app.use(cors());
-      this.app.use(express.json());
+   expressServer.use(cors());
+   expressServer.use(express.json());
 
-      this.app.use(rootRouter);
+   expressServer.use(rootRouter);
 
-      this.app.use(errorHandler);
+   expressServer.use(errorHandler);
 
-      this.listen();
-   }
+   expressServer.listen(configs.EXPRESS_PORT, () => {
+      logger.info(`Express: launched successfully PORT => "${configs.EXPRESS_PORT}"`);
+   });
 
-   listen() {
-      this.app.listen(configs.EXPRESS_PORT, () => {
-         logger.info(`Express: launched successfully PORT => "${configs.EXPRESS_PORT}"`);
-      })
-   }
-}
+   global.expressServer = expressServer;
+};
 
 // Helpers
 function errorHandler(err, req, res, next) {
@@ -51,5 +46,3 @@ function cors() {
       next();
    };
 }
-
-module.exports = ExpressApp;

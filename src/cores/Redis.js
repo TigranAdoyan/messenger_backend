@@ -2,7 +2,7 @@ const Redis = require('ioredis');
 
 const dbs = {
    auth_users: 0,
-   messengerSession: 1
+   messengerSession: 1,
 };
 
 class RedisClient {

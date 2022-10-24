@@ -1,37 +1,36 @@
 const socketMiddleware = require('../middleware');
-const Plugins = require('../plugins');
+const plugins = require('../plugins');
 
-class MessageController {
-   Plugins = Plugins;
 
-   namespace = 'message';
+module.exports.create = function (socketServer) {
+    const namespace = 'message';
 
-   events = socketServer.events.message;
+    socketServer
+        .of(namespace)
+        .use(socketMiddleware.auth)
+        .use(socketMiddleware.session)
+        .on('connection', async (socket) => {
+            const ids = await socketServer.of(namespace).fetchSockets();
 
-   constructor() {
-      socketServer
-          .of(this.namespace)
-          .use(socketMiddleware.auth)
-          .use(socketMiddleware.session)
-          .on('connection', async (socket) => {
-             const ids = await socketServer.of(this.namespace).fetchSockets();
+            console.log(`Socket "${socket.id}" connected`);
+            // console.log(ids.map(({id}) => id));
 
-             // console.log(ids.map(({id}) => id));
-             // binding event handlers
-             socket.on(this.events.client["client:sync"], this.Plugins.user.syncData);
+            // binding event handlers
+            socket.on(socketEvents.client["sync_app"], () => {
+                plugins.message.syncApp(socket);
+            });
 
-             socket.on(this.events.client["client:send_message"], this.Plugins.message.onSendMessage);
+            socket.on(socketEvents.client["send_message"], (data) => {
+                plugins.message.onSendMessage(socket, data);
+            });
 
-             socket.on('disconnect', () => {
+            socket.on('disconnect', () => {
                 console.log(`User id: ${socket.user.id} disconnected`)
-             });
+            });
 
-             socket.emit(this.events.server["server:session"], {
+            socket.emit(socketEvents.server["session"], {
                 sessionID: socket.sessionID,
                 userID: socket.userID,
-             })
-          })
-   }
-}
-
-module.exports = MessageController;
+            });
+        })
+};
