@@ -35,6 +35,7 @@ const schema = new mongoose.Schema({
             files: {
                 type: [{type: String}],
                 required: true,
+                default: []
             }
         }
     },
@@ -53,7 +54,26 @@ const model = connection.model('messages', schema);
 model.getByUser = async function (userId) {
     const groups = await groupMongoClient.getByUser(userId)
 
-    const messages = await model.aggregate([
+    // await model.create([
+    //     {
+    //         senderId: 5,
+    //         receiverId: 1,
+    //         receiverType: 'user',
+    //         content: {
+    //             text: 'From user 5'
+    //         }
+    //     },
+    //     {
+    //         senderId: 2,
+    //         receiverId: 1,
+    //         receiverType: 'user',
+    //         content: {
+    //             text: 'Response from user 2'
+    //         }
+    //     },
+    // ])
+
+    return model.aggregate([
         {
             $match: {
                 $or: [
@@ -68,11 +88,6 @@ model.getByUser = async function (userId) {
         {$group: {_id: {receiverId: "$receiverId", receiverType: "$receiverType"}, records: {$push: "$$ROOT"}}},
         {$sort: {sentAt: -1}},
     ]).then(data => data.map(({records}) => records));
-
-    return {
-        groups,
-        messages
-    }
 };
 
 module.exports = model;

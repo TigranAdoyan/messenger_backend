@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./override_prototypes');
 
 global.httpCode = require('../cores/HttpError').httpCode;
 global.HttpError = require('../cores/HttpError').HttpError;
@@ -14,11 +15,15 @@ global.configs = {
    MONGO_MESSENGER_URL: process.env.MONGO_MESSENGER_URL,
    MYSQL: {
       DURAK: {
-         host: process.env.MYSQL_DURAK_HOST,
-         port: parseInt(process.env.MYSQL_DURAK_PORT),
-         database: process.env.MYSQL_DURAK_DATABASE,
-         user: process.env.MYSQL_DURAK_USER,
-         password: process.env.MYSQL_DURAK_PASSWORD
+         host: process.env.MYSQL_MESSENGER_HOST,
+         port: parseInt(process.env.MYSQL_MESSENGER_PORT),
+         database: process.env.MYSQL_MESSENGER_DATABASE,
+         user: process.env.MYSQL_MESSENGER_USER,
+         password: process.env.MYSQL_MESSENGER_PASSWORD
       }
    },
 };
+
+global.MysqlMessengerClients = require('../mysql/messenger');
+global.RedisClients = require('../cores/Redis');
+global.MongoClients = require('../mongo/messenger');

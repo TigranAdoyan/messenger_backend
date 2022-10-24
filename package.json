@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "launch": "nodemon src/index.js"
+    "launch": "nodemon --inspect src/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -27,6 +27,7 @@
     "redis": "^4.3.1",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^4.5.3",
+    "uuid": "^9.0.0",
     "winston": "^3.8.2"
   }
 }

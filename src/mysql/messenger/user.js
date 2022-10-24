@@ -50,6 +50,20 @@ class User extends CoreMysql {
            WHERE us.subscriberId = ?
       `,  [parseInt(userId)]);
     }
+
+    async findRecommendedUsers(userId) {
+        return this.query(`
+            SELECT
+              u.id,
+              u.username,
+              u.age,
+              u.email,
+              u.profile_img_url
+            FROM users AS u
+             LEFT JOIN user_subscribers AS us ON u.id = us.userId OR u.id = us.subscriberId
+            WHERE us.userId <> ? AND us.subscriberId <> ?
+      `,  [parseInt(userId), parseInt(userId)]);
+    }
 }
 
 module.exports = new User();

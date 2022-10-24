@@ -1,3 +1,4 @@
+const uuid = require('uuid');
 const authService = require('../../../services/auth');
 
 class Middleware {
@@ -20,6 +21,36 @@ class Middleware {
       } catch (err) {
          next(err)
       }
+   }
+
+   async session(socket, next) {
+       const sessionID = socket.handshake.auth.sessionID;
+
+       if (sessionID) {
+          // find existing session
+          const session = RedisClients.messengerSession.get(sessionID);
+          if (session) {
+             socket.sessionID = sessionID;
+             socket.userID = session.userID;
+             socket.username = session.username;
+
+             console.log('old session')
+             return next();
+          }
+       }
+
+       const username = socket.handshake.auth.username;
+
+       if (!username) {
+          return next(new Error('invalid username'));
+       }
+
+       console.log('new session')
+
+       socket.sessionID = uuid.v1();
+       socket.userID = uuid.v1();
+       socket.username = username;
+       next();
    }
 }
 

@@ -1,76 +1,37 @@
 const socketMiddleware = require('../middleware');
-const MessageService = require('../services/message');
+const Plugins = require('../plugins');
 
 class MessageController {
-    service = MessageService;
+   Plugins = Plugins;
 
-    namespace = 'message';
+   namespace = 'message';
 
-    events = {
-        send: 'send',
-        sync: 'sync'
-    };
+   events = socketServer.events.message;
 
-    constructor(socketServer) {
-        this.socketServer = socketServer;
+   constructor() {
+      socketServer
+          .of(this.namespace)
+          .use(socketMiddleware.auth)
+          .use(socketMiddleware.session)
+          .on('connection', async (socket) => {
+             const ids = await socketServer.of(this.namespace).fetchSockets();
 
-        this.socketServer
-            .of(this.namespace)
-            .use(socketMiddleware.auth)
-            .once('connection', async (socket) => {
-                await this.service.setUserOnline(socket.user.id, socket.id);
+             // console.log(ids.map(({id}) => id));
+             // binding event handlers
+             socket.on(this.events.client["client:sync"], this.Plugins.user.syncData);
 
-                const ids = await this.socketServer.of(this.namespace).fetchSockets();
+             socket.on(this.events.client["client:send_message"], this.Plugins.message.onSendMessage);
 
-                console.log(ids.map(({id}) => id));
+             socket.on('disconnect', () => {
+                console.log(`User id: ${socket.user.id} disconnected`)
+             });
 
-                this.service.syncMessagingData(socket.user.id)
-                    .then(data => {
-                        socket.emit(this.events.sync, data);
-                    });
-
-                // joining to 'groups' room;
-                this.service.getUserGroups(socket.user.id)
-                    .then(data => {
-                        console.log('groups', data);
-                    });
-
-                // binding event handlers
-                socket.on(this.events.send, this.onSend);
-
-                socket.on('disconnect', () => {
-                    this.service.setUserOffline(socket.user.id)
-                });
-            })
-    }
-
-    onSend(data) {
-        console.log('on send', data);
-    }
-
-    emitSync(userId) {
-
-    }
+             socket.emit(this.events.server["server:session"], {
+                sessionID: socket.sessionID,
+                userID: socket.userID,
+             })
+          })
+   }
 }
 
 module.exports = MessageController;
-
-// const events = {
-//    send_message: 'send_message'
-// };
-//
-// class Message {
-//    _namespace = 'message';
-//
-//    _handlersBinding = {
-//       [events.send_message]: this.onSend.name,
-//    };
-//
-//    constructor() {}
-//
-//    onSend(payload) {
-//       console.log(payload);
-//    }
-// }
-//
-// module.exports = Message;

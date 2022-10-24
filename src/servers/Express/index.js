@@ -32,7 +32,7 @@ function errorHandler(err, req, res, next) {
       })
    }
 
-   logger.error(err.message);
+   logger.error(`Http Error Handler: ${err.message}`);
 
    return res.status(httpCode.INTERNAL_ERROR).json({
       message: 'Server internal error',
