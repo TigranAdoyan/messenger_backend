@@ -4,8 +4,7 @@ const groupMongoClient = require('./group');
 
 const {
     String,
-    Boolean,
-    Date
+    Boolean
 } = mongoose.Schema.Types;
 
 const schema = new mongoose.Schema({
@@ -41,7 +40,7 @@ const schema = new mongoose.Schema({
     },
     sentAt: {
         type: Date,
-        default: Date.now
+        default: () => Date.now(),
     },
     deletedAt: {
         type: Date,
@@ -62,9 +61,9 @@ model.getUserMessages = async function (firstUserId, secondUserId) {
         ],
         receiverType: 'user',
     })
-        .sort({'sendAt': -1})
+        .sort({'sendAt': 1})
         .skip(0)
-        .limit(10)
+        .limit(20)
         .lean();
 };
 
