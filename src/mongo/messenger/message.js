@@ -62,8 +62,6 @@ model.getUserMessages = async function (firstUserId, secondUserId) {
         receiverType: 'user',
     })
         .sort({'sendAt': 1})
-        .skip(0)
-        .limit(20)
         .lean();
 };
 
