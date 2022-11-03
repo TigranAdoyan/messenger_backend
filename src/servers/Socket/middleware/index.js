@@ -7,7 +7,7 @@ class Middleware {
 
    async auth(socket, next) {
       try {
-         const token = socket.handshake.auth.token;
+          const token = socket.handshake.auth.token;
 
          if (typeof token !== 'string') {
             throw new HttpError('invalid token');
@@ -34,7 +34,6 @@ class Middleware {
              socket.userID = session.userID;
              socket.username = session.username;
 
-             console.log('old session');
              return next();
           }
        }
@@ -44,8 +43,6 @@ class Middleware {
        if (!username) {
           return next(new Error('invalid username'));
        }
-
-       console.log('new session');
 
        socket.sessionID = uuid.v1();
        socket.userID = uuid.v1();

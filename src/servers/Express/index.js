@@ -1,10 +1,12 @@
 const express = require('express');
+const morgan = require('morgan');
 const rootRouter = require('./routes');
 const {httpCode, HttpError} = require("../../cores/HttpError");
 
 module.exports.create = function () {
     global.expressServer = express();
 
+    expressServer.use(createMorgan());
     expressServer.use(cors());
     expressServer.use(express.json());
 
@@ -45,4 +47,16 @@ function cors() {
         }
         next();
     };
+}
+
+function createMorgan() {
+    return morgan(function (tokens, req, res) {
+        return [
+            tokens.method(req, res),
+            tokens.url(req, res),
+            tokens.status(req, res),
+            tokens.res(req, res, 'content-length'), '-',
+            tokens['response-time'](req, res), 'ms'
+        ].join(' ')
+    })
 }
