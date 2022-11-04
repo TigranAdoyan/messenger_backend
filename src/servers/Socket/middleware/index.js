@@ -10,7 +10,8 @@ class Middleware {
           const token = socket.handshake.auth.token;
 
          if (typeof token !== 'string') {
-            throw new HttpError('invalid token');
+            console.log('socketIo: invalid token')
+             throw new HttpError('invalid token');
          }
 
          socket.user = await authService.auth({
