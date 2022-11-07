@@ -1,6 +1,0 @@
-[
-    {
-        username: 'tigran',
-        password: 'passcode'
-    },
-]

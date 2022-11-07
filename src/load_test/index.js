@@ -1,11 +1,14 @@
-require('dotenv').config();
+require('dotenv').config({ path: `${__dirname}/../../.env` });
 const {io} = require('socket.io-client');
 const uuid = require('uuid');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 
 const URL = 'http://localhost:3334';
 const LOGS_PATH = path.join(__dirname, './logs.json');
+const USERS_CREDENTIALS_PATH = path.join(__dirname, './users_creds.json');
+const USERS_CREDENTIALS = JSON.parse(fs.readFileSync(USERS_CREDENTIALS_PATH, { encoding: "utf8" }));
 
 const events = {
     'client:sync_app': 'client:sync_app',
@@ -16,7 +19,7 @@ const events = {
 
 const polling_percentage = 0.05;
 const frequency_send_message_pre_user_ms = 100;
-const messages_each_iteration_per_user = 1;
+const messages_each_iteration_per_user = 1000;
 const each_report_time = 1000;
 const record_report_log_after_ms = 15000;
 let reports_count = 5;
@@ -53,37 +56,42 @@ const reporter = new (function Report() {
     };
 })();
 
-const connections = [
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY2NzIyODcyNn0.AUQpBhtWg9XUOOFFyhXqUUXzxsWRpOHcIvxh24rqhZY',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTY2NzM5OTA4OX0.0G7Oba_h1xMFWWa1n4hvF_X6EI5yIQgoOcwslNOWw5Q',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTY2NzM5OTEyOX0.baZevuidD3KfxQt2oHX1kTnbuOzA679VSDapTYcCA1g',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTY2NzM5OTE3MH0.5SjrXCJYiqddvKwXXZ4TKDnVx6b_7NWF4z_Y1zM41ao',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTY2NzM5OTIyN30.q86mytDhbON_9bo5lFMZZvj2F3LihRVlA9nsA4f9Axk'
-].map(token => {
-    const transports = Math.random() < polling_percentage ? ["polling"] : ["polling", "websocket"];
+function createConnections(tokens) {
+    return tokens.map(token => {
+      const transports = Math.random() < polling_percentage ? ["polling"] : ["polling", "websocket"];
 
-    const socket = io(`${URL}/message`, {
-        transports,
-        auth: {
-            username: "some_username",
-            token
-        },
-        authConnect: true,
-    });
+      const socket = io(`${URL}/message`, {
+          transports,
+          auth: {
+              username: "some_username",
+              token
+          },
+          authConnect: true,
+      });
 
-    socket.emit(events["client:sync_app"]);
+      socket.emit(events["client:sync_app"]);
 
-    socket.on(events["server:send_message"], (data) => {
-        const sentDate = pending_message[data.messageId];
-        message_receiving_times.push(new Date().getTime() - sentDate);
-        delete pending_message[data.messageId];
-        reportEachSecond.receivedMessages++;
-    });
+      socket.on(events["server:send_message"], (data) => {
+          const sentDate = pending_message[data.messageId];
+          message_receiving_times.push(new Date().getTime() - sentDate);
+          delete pending_message[data.messageId];
+          reportEachSecond.receivedMessages++;
+      });
 
-    return socket;
-});
+      return socket;
+  })
+}
 
-(function startLoadTesting() {
+function signInUsers(credentials) {
+    return Promise.all(credentials.map((signInData) => axios.post(`http://localhost:${process.env.EXPRESS_PORT}/user/login`, signInData)
+        .then(response => response.data.token)))
+}
+
+(async function startLoadTesting() {
+    console.log('Load test started');
+
+    const connections = await signInUsers(USERS_CREDENTIALS).then(createConnections);
+
     connections.map((connection, index) => {
         return setInterval(() => {
             for (let i = 0; i < messages_each_iteration_per_user; i++) {
@@ -102,7 +110,7 @@ const connections = [
         reportEachSecond.receivedMessages = 0;
         reportEachSecond.sentMessages = 0;
 
-        if (--reports_count === 0) {
+        if (--reports_count === -1) {
             clearInterval(printReportPerInterval);
 
             setTimeout(() => {
