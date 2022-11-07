@@ -7,7 +7,9 @@ const dbs = {
 
 class RedisClient {
     constructor(db) {
-      this.client = new Redis(`redis://127.0.0.1:6380/${dbs[db]}`);
+
+       console.log(`${configs.REDIS_HOST}:${configs.REDIS_PORT}/${dbs[db]}`);
+       this.client = new Redis(`${configs.REDIS_HOST}:${configs.REDIS_PORT}/${dbs[db]}`);
 
       logger.info(`Redis: connected successfully "${db}"`);
    }

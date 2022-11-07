@@ -12,6 +12,20 @@ global.configs = {
    REDIS_HOST: process.env.REDIS_HOST,
    REDIS_PORT: parseInt(process.env.REDIS_PORT),
    REDIS_PASSWORD: process.env.REDIS_PASSWORD,
+   REDIS_CLUSTER: [
+      {
+         host: process.env.REDIS_CLUSTER_NODE_1_HOST,
+         port: process.env.REDIS_CLUSTER_NODE_1_PORT
+      },
+      {
+         host: process.env.REDIS_CLUSTER_NODE_2_HOST,
+         port: process.env.REDIS_CLUSTER_NODE_2_PORT
+      },
+      {
+         host: process.env.REDIS_CLUSTER_NODE_3_HOST,
+         port: process.env.REDIS_CLUSTER_NODE_3_PORT
+      },
+   ],
    MONGO_MESSENGER_URL: process.env.MONGO_MESSENGER_URL,
    MYSQL: {
       DURAK: {

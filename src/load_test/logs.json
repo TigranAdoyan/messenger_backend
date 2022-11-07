@@ -1,23 +1,23 @@
 {
 	"statistics_each_second": [
-		"45:0",
-		"45:0",
-		"45:0",
-		"45:0",
-		"45:0"
+		"45:45",
+		"45:45",
+		"45:45",
+		"45:45",
+		"45:45"
 	],
 	"total": {
 		"sentMessages": 225,
-		"receivedMessages": 0
+		"receivedMessages": 225
 	},
 	"after_15000_ms": {
 		"sentMessages": 225,
-		"receivedMessages": 0
+		"receivedMessages": 225
 	},
 	"message_receiving_delay": {
-		"min": null,
-		"max": null,
-		"avg": null
+		"min": 1,
+		"max": 4,
+		"avg": 2.137777777777778
 	},
-	"not_received_messages_count": 225
+	"not_received_messages_count": 0
 }

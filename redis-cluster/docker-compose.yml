@@ -1,0 +1,81 @@
+version: '3'
+
+services:
+  redis-master:
+    container_name: 'redis-master'
+    image: redis
+    expose:
+      - 6379
+    command: "redis-server /etc/redis.conf"
+    volumes:
+      - ./conf/master.conf:/etc/redis.conf
+      - redis_master_data:/data
+    networks:
+      redis_cluster_net:
+        ipv4_address: 172.20.0.5
+
+  redis-slave-1:
+    container_name: 'redis-slave-1'
+    image: redis
+    expose:
+      - 6379
+    command: "redis-server /etc/redis.conf"
+    volumes:
+      - ./conf/slave_1.conf:/etc/redis.conf
+      - redis_slave_1_data:/data
+    networks:
+      redis_cluster_net:
+        ipv4_address: 172.20.0.6
+    depends_on:
+      - redis-master
+
+  redis-slave-2:
+    container_name: 'redis-slave-2'
+    image: redis
+    expose:
+      - 6379
+    command: "redis-server /etc/redis.conf"
+    volumes:
+      - ./conf/slave_2.conf:/etc/redis.conf
+      - redis_slave_2_data:/data
+    networks:
+      redis_cluster_net:
+        ipv4_address: 172.20.0.7
+    depends_on:
+      - redis-master
+
+  redis-sentinel:
+    container_name: 'redis-sentinel'
+    image: redis
+    expose:
+      - 26379
+#    command: "redis-server /etc/sentinel.conf --sentinel"
+    # https://stackoverflow.com/questions/70384566/warning-sentinel-was-not-able-to-save-the-new-configuration-on-disk-device
+    command: bash -c "chmod a+wx /etc && redis-server /etc/sentinel.conf --sentinel"
+    volumes:
+      - ./conf/sentinel.conf:/etc/sentinel.conf
+    networks:
+      redis_cluster_net:
+        ipv4_address: 172.20.0.8
+    depends_on:
+      - redis-master
+      - redis-slave-1
+
+volumes:
+  redis_master_data:
+    external: true
+  redis_slave_1_data:
+    external: true
+  redis_slave_2_data:
+    external: true
+
+networks:
+  redis_cluster_net:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+#networks:
+#  redis_cluster_net:
+#    driver: bridge
+#    external: true
+
