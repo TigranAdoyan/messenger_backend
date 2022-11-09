@@ -19,7 +19,7 @@ const events = {
 
 const polling_percentage = 0.05;
 const frequency_send_message_pre_user_ms = 100;
-const messages_each_iteration_per_user = 1000;
+const messages_each_iteration_per_user = 500;
 const each_report_time = 1000;
 const record_report_log_after_ms = 15000;
 let reports_count = 5;

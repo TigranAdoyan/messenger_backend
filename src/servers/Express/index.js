@@ -21,7 +21,6 @@ module.exports.create = function () {
     global.expressServer = expressServer;
 };
 
-// Helpers
 function errorHandler(err, req, res, next) {
     if (err instanceof HttpError) {
         return res.status(err.code).json({

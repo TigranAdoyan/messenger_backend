@@ -1,5 +1,3 @@
-let messagesCount = 0;
-
 class MessagePlugin {
    static async syncApp(ioServer, socket) {
       const userId = socket.user.id;
@@ -79,8 +77,6 @@ class MessagePlugin {
       socket.to(receiverId.toString()).emit(socketEvents.server['send_message'], {
          messageId: data.messageId
       });
-
-      console.log(++messagesCount);
 
       // const message = await MongoClients.message.create({
       //    senderId: socket.user.id,

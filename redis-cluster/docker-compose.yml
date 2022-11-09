@@ -6,9 +6,9 @@ services:
     image: redis
     expose:
       - 6379
-    command: "redis-server /etc/redis.conf"
+    command: "redis-server /etc/redis-config/redis.conf"
     volumes:
-      - ./conf/master.conf:/etc/redis.conf
+      - ./config/master:/etc/redis-config
       - redis_master_data:/data
     networks:
       redis_cluster_net:
@@ -19,9 +19,9 @@ services:
     image: redis
     expose:
       - 6379
-    command: "redis-server /etc/redis.conf"
+    command: "redis-server /etc/redis-config/redis.conf"
     volumes:
-      - ./conf/slave_1.conf:/etc/redis.conf
+      - ./config/slave_1:/etc/redis-config
       - redis_slave_1_data:/data
     networks:
       redis_cluster_net:
@@ -34,9 +34,9 @@ services:
     image: redis
     expose:
       - 6379
-    command: "redis-server /etc/redis.conf"
+    command: "redis-server /etc/redis-config/redis.conf"
     volumes:
-      - ./conf/slave_2.conf:/etc/redis.conf
+      - ./config/slave_2:/etc/redis-config
       - redis_slave_2_data:/data
     networks:
       redis_cluster_net:
@@ -44,22 +44,39 @@ services:
     depends_on:
       - redis-master
 
-  redis-sentinel:
-    container_name: 'redis-sentinel'
+  redis-sentinel-1:
+    container_name: 'redis-sentinel-1'
     image: redis
     expose:
       - 26379
-#    command: "redis-server /etc/sentinel.conf --sentinel"
-    # https://stackoverflow.com/questions/70384566/warning-sentinel-was-not-able-to-save-the-new-configuration-on-disk-device
-    command: bash -c "chmod a+wx /etc && redis-server /etc/sentinel.conf --sentinel"
+    # command: "redis-server /etc/sentinel.conf --sentinel"
+    command: bash -c "chmod a+wx /etc && redis-server /etc/redis-config/redis.conf --sentinel"
     volumes:
-      - ./conf/sentinel.conf:/etc/sentinel.conf
+      - ./config/sentinel_1:/etc/redis-config
     networks:
       redis_cluster_net:
         ipv4_address: 172.20.0.8
     depends_on:
       - redis-master
       - redis-slave-1
+      - redis-slave-2
+
+  redis-sentinel-2:
+    container_name: 'redis-sentinel-2'
+    image: redis
+    expose:
+      - 26379
+    # command: "redis-server /etc/sentinel.conf --sentinel"
+    command: bash -c "chmod a+wx /etc && redis-server /etc/redis-config/redis.conf --sentinel"
+    volumes:
+      - ./config/sentinel_2:/etc/redis-config
+    networks:
+      redis_cluster_net:
+        ipv4_address: 172.20.0.9
+    depends_on:
+      - redis-master
+      - redis-slave-1
+      - redis-slave-2
 
 volumes:
   redis_master_data:

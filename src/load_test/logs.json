@@ -1,24 +1,24 @@
 {
 	"statistics_each_second": [
-		"38000:2134",
-		"45000:3490",
-		"42000:2789",
-		"45000:4876",
-		"36000:4183",
-		"0:3947"
+		"21500:2591",
+		"23500:4187",
+		"23000:4183",
+		"24000:4877",
+		"22500:4884",
+		"0:5573"
 	],
 	"total": {
-		"sentMessages": 206000,
-		"receivedMessages": 21419
+		"sentMessages": 114500,
+		"receivedMessages": 26295
 	},
 	"after_15000_ms": {
-		"sentMessages": 206000,
-		"receivedMessages": 84398
+		"sentMessages": 114500,
+		"receivedMessages": 96708
 	},
 	"message_receiving_delay": {
-		"min": 200,
-		"max": 20922,
-		"avg": 8653.374037299462
+		"min": 83,
+		"max": 19706,
+		"avg": 8272.653555031642
 	},
-	"not_received_messages_count": 121602
+	"not_received_messages_count": 17792
 }
