@@ -85,6 +85,10 @@ function createConnections(tokens) {
 function signInUsers(credentials) {
     return Promise.all(credentials.map((signInData) => axios.post(`http://localhost:${process.env.EXPRESS_PORT}/user/login`, signInData)
         .then(response => response.data.token)))
+        .catch(error => {
+            console.error(`Error: ${error.response.data.message}`);
+            process.exit(1);
+        });
 }
 
 (async function startLoadTesting() {
@@ -136,6 +140,7 @@ function recordLogs(log) {
         } else {
             fs.writeFile(LOGS_PATH, JSON.stringify(log, null, "\t"), () => {
                 console.log('Logs recorded !')
+                process.exit();
             });
         }
     });
